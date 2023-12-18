@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/widgetTree" : (context) => const WidgetTree(),
         "/loginPage" :(context) => const LoginPage(),
-        "/homePage" :(context) => HomePage()
+        "/homePage" :(context) => const HomePage()
       },
       home: const WidgetTree(),
     );
