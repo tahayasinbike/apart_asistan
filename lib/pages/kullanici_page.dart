@@ -1,5 +1,6 @@
 import 'package:apart_asistan/service/auth_service.dart';
 import 'package:apart_asistan/utils/custom_colors.dart';
+import 'package:apart_asistan/widgets/custom_texts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _KullaniciPageState extends State<KullaniciPage> {
       floatingActionButton: SpeedDial(
             icon: Icons.menu, //icon on Floating action button
             activeIcon: Icons.close, //icon when menu is expanded on button
-            backgroundColor: Colors.deepOrangeAccent, //background color of button
+            backgroundColor: Color.fromARGB(255, 178, 84, 77), //background color of button
             foregroundColor: Colors.white, //font color, icon color in button
             activeBackgroundColor: Colors.deepPurpleAccent, //background color when menu is expanded
             activeForegroundColor: Colors.white,
@@ -62,33 +63,38 @@ class _KullaniciPageState extends State<KullaniciPage> {
             onClose: () => print('DIAL CLOSED'), //action when menu closes
 
             elevation: 8.0, //shadow elevation of button
-            shape: CircleBorder(), //shape of button
+            shape: const CircleBorder(
+              side: BorderSide(
+                width: 2,
+                color: Colors.white
+              )
+            ), //shape of button
             
             children: [
               SpeedDialChild( //speed dial child
-                child: Icon(Icons.accessibility),
+                child: const Icon(Icons.notifications_active),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                label: 'First Menu Child',
-                labelStyle: TextStyle(fontSize: 18.0),
+                label: 'Bildirimler',
+                labelStyle: const TextStyle(fontSize: 18.0),
                 onTap: () => print('FIRST CHILD'),
                 onLongPress: () => print('FIRST CHILD LONG PRESS'),
               ),
               SpeedDialChild(
-                child: Icon(Icons.brush),
+                child: const Icon(Icons.notification_important_outlined),
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
-                label: 'Second Menu Child',
-                labelStyle: TextStyle(fontSize: 18.0),
+                label: 'Asansör Arıza Bildir',
+                labelStyle: const TextStyle(fontSize: 18.0),
                 onTap: () => print('SECOND CHILD'),
                 onLongPress: () => print('SECOND CHILD LONG PRESS'),
               ),
               SpeedDialChild(
-                child: Icon(Icons.keyboard_voice),
+                child: const Icon(Icons.send),
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.green,
-                label: 'Third Menu Child',
-                labelStyle: TextStyle(fontSize: 18.0),
+                label: 'Yöneticiye mesaj gönder',
+                labelStyle: const TextStyle(fontSize: 18.0),
                 onTap: () => print('THIRD CHILD'),
                 onLongPress: () => print('THIRD CHILD LONG PRESS'),
               ),
@@ -114,14 +120,22 @@ class _KullaniciPageState extends State<KullaniciPage> {
           scaffoldKey.currentState?.openDrawer();
         }, icon: const Icon(Icons.miscellaneous_services, color: CustomColors.lightColor,)),
         actions: [IconButton(onPressed: signOut, icon:  const Icon(Icons.logout_outlined, color: CustomColors.lightColor,)),],
+        bottom: PreferredSize(preferredSize: Size.fromHeight(4.0), child:Container(
+          height: 1.0,
+          decoration: BoxDecoration(
+            color: CustomColors.cardColor,
+            boxShadow: [BoxShadow(blurRadius: 6,offset: Offset(0, 1), spreadRadius: 0.3)],
+          ),
+        )),
       ),
       body: SingleChildScrollView(
         child: 
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Card(
+          Padding(
+            padding:const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,//baştan başlatıyor
+              children: [
+                Card(
                   
                   color: CustomColors.cardColor,
                               child: ListTile(
@@ -130,31 +144,64 @@ class _KullaniciPageState extends State<KullaniciPage> {
                 subtitle: Text(site,style: const TextStyle(color: CustomColors.darkColor)),
                               ),
                               ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 40, bottom: 15),
+                  child: SizedBox(child: customText("AİDAT \nDETAYLARIM", CustomColors.cardColor, 25)),),
+                
+                Stack(
+                  children:[
+                    Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1,
+                          color: CustomColors.lightColor),
+                      color: CustomColors.darkColor,
+                      borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
+                    ),
+                    width: double.infinity,
+                    height: 300,
+
+                  ),
+                     Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      decoration:  BoxDecoration(
+                        border: Border.all(
+                          width: 1,
+                          color: CustomColors.lightColor),
+                        color: CustomColors.darkColor,
+                        borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
+                      ),
+                      width: double.infinity,
+                      height: 300,
+                      
+                      
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Container(
+                      decoration:  BoxDecoration(
+                        border: Border.all(
+                          width: 1,
+                          color: CustomColors.lightColor),
+                        color: CustomColors.darkColor,
+                        borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
+                      ),
+                      width: double.infinity,
+                      height: 300,
+                      
+                      
+                    ),
+                  ),
+                  ] 
+                ),
+
+              ]
+            ),
           ),
         
       ),
-    /* bottomNavigationBar: BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      color: CustomColors.lightColor,
-      child: IconTheme(data: IconThemeData(
-        color: CustomColors.darkColor
-      ), child: Padding(
-        padding: EdgeInsets.all(12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-           IconButton(onPressed: () {
-             
-           }, icon: Icon(Icons.wallet)),
-           IconButton(onPressed: () {
-             
-           }, icon: Icon(Icons.chat))
-          ],
-        ), 
-      )),
-    ), */
     );
   }
 }

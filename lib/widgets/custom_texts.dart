@@ -6,9 +6,10 @@ Text titleText(String text) {
     return Text(
       text,
       style: CustomTextStyle.titleTextStyle,
+      
     );
   }
-Widget customText(String text, Color color) => Text(
+Widget customText(String text, Color color, double? size) => Text(
       text,
-      style: TextStyle(color: color),
+      style: TextStyle(color: color, fontSize: size ?? 15),
      );
