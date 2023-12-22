@@ -1,10 +1,13 @@
+import 'package:apart_asistan/pages/alert_page.dart';
+import 'package:apart_asistan/pages/elevator_page.dart';
+import 'package:apart_asistan/pages/main_page.dart';
+import 'package:apart_asistan/pages/message_page.dart';
 import 'package:apart_asistan/service/auth_service.dart';
 import 'package:apart_asistan/utils/custom_colors.dart';
-import 'package:apart_asistan/widgets/custom_texts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:iconly/iconly.dart';
 
 class KullaniciPage extends StatefulWidget {
   const KullaniciPage({Key? key}) : super(key: key);
@@ -14,6 +17,13 @@ class KullaniciPage extends StatefulWidget {
 }
 
 class _KullaniciPageState extends State<KullaniciPage> {
+  List<Widget> body = [
+    const MainPage(),
+    const AlertPage(),
+    const ElevatorPage(),
+    const MessagePage(),
+  ];
+  int pageIndex = 0;
   late String name = "";
   late String kapiNo = "";
   late String site = "";
@@ -27,10 +37,7 @@ class _KullaniciPageState extends State<KullaniciPage> {
     super.initState();
     getInfo();
   }
-  Future<void> signOut()async{
-    await AuthService().signOut();
-  }
- Future<void> getInfo()async{
+  Future<void> getInfo()async{
      var userInfo =await AuthService().getTitle(user);
      setState(() {
         name = userInfo?["name"] ?? "";
@@ -40,13 +47,62 @@ class _KullaniciPageState extends State<KullaniciPage> {
         surname =userInfo["surname"];
      });
   }
+
+
+  Future<void> signOut()async{
+    await AuthService().signOut();
+  }
+ 
+  
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  
   @override
   Widget build(BuildContext context) {
+    
     CollectionReference siteRef = firebaseFirestore.collection("oguzkent");
     var userKod = siteRef.doc(user!.uid); //{name: taha, surname:bike}
+    
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+      key: scaffoldKey,
+      backgroundColor: CustomColors.bodyColor,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [BottomNavigationBarItem(
+        icon: Icon(IconlyLight.home, color: Colors.grey,),
+        activeIcon: Icon(IconlyBold.home, color: Colors.amber,),
+          label: "",
+          backgroundColor: Colors.black
+          
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(IconlyLight.notification, color: Colors.grey,),
+          activeIcon: Icon(IconlyBold.notification, color: Colors.amber,),
+          label: "",
+          backgroundColor: Colors.black
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(IconlyLight.danger, color: Colors.grey,),
+          activeIcon: Icon(IconlyBold.danger, color: Colors.amber,),
+          label: "",
+          backgroundColor: Colors.black
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(IconlyLight.send, color: Colors.grey,),
+          activeIcon: Icon(IconlyBold.send, color: Colors.amber,),
+          label: "",
+          backgroundColor: Colors.black
+        )
+        
+        ],
+        currentIndex: pageIndex,
+        onTap: (int newPageIndex) {
+          setState(() {
+            pageIndex = newPageIndex;
+          });
+        },
+        ),
+      /* floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: SpeedDial(
             icon: Icons.menu, //icon on Floating action button
             activeIcon: Icons.close, //icon when menu is expanded on button
@@ -101,107 +157,23 @@ class _KullaniciPageState extends State<KullaniciPage> {
 
               //add more menu item children here
             ],
-          ),
-      backgroundColor: CustomColors.bodyColor,
-      key: scaffoldKey,
-      drawer: const Drawer(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-            ],
-          ),
-        ),
-      ),
+          ), */
+      
       appBar: AppBar(
-        backgroundColor: CustomColors.darkColor,
+        backgroundColor: CustomColors.appbarColor,
         title: binaNo !="" && kapiNo !="" ? Text("($binaNo-$kapiNo) ",style: const TextStyle(color: CustomColors.lightColor),) : const CircularProgressIndicator(),
         centerTitle: true,
-        leading: IconButton(onPressed: () {
-          scaffoldKey.currentState?.openDrawer();
-        }, icon: const Icon(Icons.miscellaneous_services, color: CustomColors.lightColor,)),
-        actions: [IconButton(onPressed: signOut, icon:  const Icon(Icons.logout_outlined, color: CustomColors.lightColor,)),],
-        bottom: PreferredSize(preferredSize: Size.fromHeight(4.0), child:Container(
+        actions: [IconButton(onPressed: signOut, icon: const Icon(IconlyLight.logout, color: Colors.white,),),],
+        bottom: PreferredSize(preferredSize: const Size.fromHeight(4.0), child:Container(
           height: 1.0,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: CustomColors.cardColor,
             boxShadow: [BoxShadow(blurRadius: 6,offset: Offset(0, 1), spreadRadius: 0.3)],
           ),
         )),
       ),
-      body: SingleChildScrollView(
-        child: 
-          Padding(
-            padding:const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,//baştan başlatıyor
-              children: [
-                Card(
-                  
-                  color: CustomColors.cardColor,
-                              child: ListTile(
-                
-                title: Text(name +"  " +surname,style: const TextStyle(color: CustomColors.darkColor),),
-                subtitle: Text(site,style: const TextStyle(color: CustomColors.darkColor)),
-                              ),
-                              ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, bottom: 15),
-                  child: SizedBox(child: customText("AİDAT \nDETAYLARIM", CustomColors.cardColor, 25)),),
-                
-                Stack(
-                  children:[
-                    Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 1,
-                          color: CustomColors.lightColor),
-                      color: CustomColors.darkColor,
-                      borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
-                    ),
-                    width: double.infinity,
-                    height: 300,
-
-                  ),
-                     Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Container(
-                      decoration:  BoxDecoration(
-                        border: Border.all(
-                          width: 1,
-                          color: CustomColors.lightColor),
-                        color: CustomColors.darkColor,
-                        borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
-                      ),
-                      width: double.infinity,
-                      height: 300,
-                      
-                      
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50),
-                    child: Container(
-                      decoration:  BoxDecoration(
-                        border: Border.all(
-                          width: 1,
-                          color: CustomColors.lightColor),
-                        color: CustomColors.darkColor,
-                        borderRadius: BorderRadius.all(Radius.elliptical(35, 30))
-                      ),
-                      width: double.infinity,
-                      height: 300,
-                      
-                      
-                    ),
-                  ),
-                  ] 
-                ),
-
-              ]
-            ),
-          ),
-        
-      ),
+      body: body[pageIndex]
+    
     );
   }
 }
