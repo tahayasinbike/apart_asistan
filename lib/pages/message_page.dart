@@ -2,7 +2,9 @@ import 'package:apart_asistan/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lottie/lottie.dart';
 
 class MessagePage extends StatefulWidget {
   const MessagePage({Key? key}) : super(key: key);
@@ -19,9 +21,11 @@ class _MessagePageState extends State<MessagePage> {
   late String kapiNo = "";
   late String surname = "";
   late String binaNo = "";
+  late String adminId = "";
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final User? user = AuthService().currentUser;
   late CollectionReference siteRef;
+  late CollectionReference adminsRef;
   bool isTextFieldEmpty = true;
   @override
   void initState() {
@@ -35,12 +39,14 @@ class _MessagePageState extends State<MessagePage> {
         kapiNo = userInfo!["kapiNo"];
         binaNo =userInfo["binaNo"];
         surname =userInfo["surname"];
+        adminId =userInfo["adminId"];
      });
   }
 
   @override
   Widget build(BuildContext context) {
     CollectionReference siteRef = firebaseFirestore.collection("oguzkent");
+    CollectionReference adminsRef = firebaseFirestore.collection("admins");
     var userKod = siteRef.doc(user!.uid); //{name: taha, surname:bike}
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -135,11 +141,13 @@ class _MessagePageState extends State<MessagePage> {
                     "adress": binaNo+"-"+kapiNo
                     };
                     if (selectedValue != null && _label.text != "") {
-                      await siteRef.doc("6Q18IFoORcUauOW5Djps4SMevRF2").update({
+                      await adminsRef.doc(adminId).update({
                       "gelenBox": FieldValue.arrayUnion([
                        ekle
                       ])
                       }); 
+                      _label.clear();
+                      showCustomMessage(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -155,5 +163,18 @@ class _MessagePageState extends State<MessagePage> {
         ],
       ),
     );
+  }
+  showCustomMessage(BuildContext context){
+    FToast tostt = FToast();
+    tostt.init(context);
+    Widget toast = Container(
+      width: 70,
+      height: 70,
+      child: Lottie.network("https://lottie.host/d68b5ed5-15c1-4236-a24b-88210856628a/MWkALsxXxT.json"),
+    );
+    tostt.showToast(
+      positionedToastBuilder: (context, child) => Positioned(child:child,top: MediaQuery.of(context).size.height -200,left: 0,right: 0, ),
+      child: toast, toastDuration: Duration(milliseconds: 1600));
+    
   }
 }

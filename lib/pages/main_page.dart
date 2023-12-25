@@ -51,8 +51,8 @@ class _MainPageState extends State<MainPage> {
                   color: CustomColors.cardColor,
                               child: ListTile(
                 
-                title: Text(name +"  " +surname,style: const TextStyle(color: CustomColors.darkColor),),
-                subtitle: Text(site,style: const TextStyle(color: CustomColors.darkColor)),
+                title: name != "" && surname != "" ? Text(name +"  " +surname,style: const TextStyle(color: CustomColors.darkColor),) : Text("Error",style: const TextStyle(color: CustomColors.darkColor),),
+                subtitle:site != "" ? Text(site,style: const TextStyle(color: CustomColors.darkColor)) : null,
                               ),
                               ),
                 Padding(
@@ -60,8 +60,8 @@ class _MainPageState extends State<MainPage> {
                   child: Container(child: Row(
                     children: [
                       customText("AİDAT \nDETAYLARIM", CustomColors.cardColor, 25),
-                       Padding(
-                         padding: const EdgeInsets.only(left:150),
+                       const Padding(
+                         padding: EdgeInsets.only(left:150),
                          child: Icon(IconlyLight.wallet, color: Colors.white,size: 50,),
                        )
                     ],

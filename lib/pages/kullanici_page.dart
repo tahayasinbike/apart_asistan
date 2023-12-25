@@ -1,9 +1,14 @@
+import 'package:apart_asistan/pages/admin/all_users.dart';
+import 'package:apart_asistan/pages/admin/elevator_gelen_kutusu.dart';
+import 'package:apart_asistan/pages/admin/gelen_kutusu.dart';
+import 'package:apart_asistan/pages/admin/out_box.dart';
 import 'package:apart_asistan/pages/alert_page.dart';
 import 'package:apart_asistan/pages/elevator_page.dart';
 import 'package:apart_asistan/pages/main_page.dart';
 import 'package:apart_asistan/pages/message_page.dart';
 import 'package:apart_asistan/service/auth_service.dart';
 import 'package:apart_asistan/utils/custom_colors.dart';
+import 'package:apart_asistan/widgets/custom_list_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +34,7 @@ class _KullaniciPageState extends State<KullaniciPage> {
   late String site = "";
   late String binaNo = "";
   late String surname = "";
+  late String? rol = "";
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final User? user = AuthService().currentUser;
   late CollectionReference siteRef; 
@@ -45,6 +51,7 @@ class _KullaniciPageState extends State<KullaniciPage> {
         site =userInfo["site"];
         binaNo =userInfo["binaNo"];
         surname =userInfo["surname"];
+        rol = userInfo["rol"];
      });
   }
 
@@ -64,6 +71,22 @@ class _KullaniciPageState extends State<KullaniciPage> {
     var userKod = siteRef.doc(user!.uid); //{name: taha, surname:bike}
     
     return Scaffold(
+      drawer: rol !=null ? SafeArea(
+        child:Drawer(
+          backgroundColor: const Color.fromARGB(143, 0, 0, 0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ListTileMethod(context: context, icon: IconlyLight.add_user, titlee: "Kullanıcı ekle",),
+                ListTileMethod(context: context, titlee: "Oturanlar", icon: IconlyLight.user, sayfa: const AllUsers()),
+                ListTileMethod(context: context, titlee: "Gelen Kutusu", icon: IconlyLight.message,sayfa: const GelenKutusu()),
+                ListTileMethod(context: context, titlee: "Mesaj yaz", icon: IconlyLight.edit, sayfa: const OutBox()),
+                ListTileMethod(context: context, titlee: "Asansör Arıza", icon: IconlyLight.danger, sayfa: const ElevatorGelenKutusu())
+              ],
+            ),
+          ),
+        ) 
+      ) : const SizedBox.shrink(),
 
       key: scaffoldKey,
       backgroundColor: CustomColors.bodyColor,
@@ -160,6 +183,10 @@ class _KullaniciPageState extends State<KullaniciPage> {
           ), */
       
       appBar: AppBar(
+        
+        leading: rol != null ?IconButton(onPressed: () {
+          scaffoldKey.currentState?.openDrawer();
+        },icon: const Icon(IconlyLight.category, color: Colors.grey,),) :const SizedBox.shrink(),
         backgroundColor: CustomColors.appbarColor,
         title: binaNo !="" && kapiNo !="" ? Text("($binaNo-$kapiNo) ",style: const TextStyle(color: CustomColors.lightColor),) : const CircularProgressIndicator(),
         centerTitle: true,
