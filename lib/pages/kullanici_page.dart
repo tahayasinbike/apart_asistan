@@ -1,7 +1,7 @@
 import 'package:apart_asistan/pages/admin/all_users.dart';
 import 'package:apart_asistan/pages/admin/elevator_gelen_kutusu.dart';
 import 'package:apart_asistan/pages/admin/gelen_kutusu.dart';
-import 'package:apart_asistan/pages/admin/out_box.dart';
+import 'package:apart_asistan/pages/admin/send_message.dart';
 import 'package:apart_asistan/pages/alert_page.dart';
 import 'package:apart_asistan/pages/elevator_page.dart';
 import 'package:apart_asistan/pages/main_page.dart';
@@ -80,7 +80,7 @@ class _KullaniciPageState extends State<KullaniciPage> {
                 ListTileMethod(context: context, icon: IconlyLight.add_user, titlee: "Kullanıcı ekle",),
                 ListTileMethod(context: context, titlee: "Oturanlar", icon: IconlyLight.user, sayfa: const AllUsers()),
                 ListTileMethod(context: context, titlee: "Gelen Kutusu", icon: IconlyLight.message,sayfa: const GelenKutusu()),
-                ListTileMethod(context: context, titlee: "Mesaj yaz", icon: IconlyLight.edit, sayfa: const OutBox()),
+                ListTileMethod(context: context, titlee: "Mesaj yaz", icon: IconlyLight.edit, sayfa: const SendMessage()),
                 ListTileMethod(context: context, titlee: "Asansör Arıza", icon: IconlyLight.danger, sayfa: const ElevatorGelenKutusu())
               ],
             ),

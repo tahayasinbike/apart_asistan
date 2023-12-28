@@ -1,4 +1,5 @@
 import 'package:apart_asistan/service/auth_service.dart';
+import 'package:apart_asistan/utils/custom_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,17 +7,18 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 
-class ElevatorPage extends StatefulWidget {
-  const ElevatorPage({super.key});
+class SendMessage extends StatefulWidget {
+  const SendMessage({super.key});
 
   @override
-  State<ElevatorPage> createState() => _ElevatorPageState();
+  State<SendMessage> createState() => _SendMessageState();
 }
 
-class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderStateMixin{
+class _SendMessageState extends State<SendMessage> with SingleTickerProviderStateMixin{
   late AnimationController lottieController;
-  final TextEditingController _sender = TextEditingController();
+  final TextEditingController _alici = TextEditingController();
   final TextEditingController _label = TextEditingController();
+  bool isTextFieldEmpty = true;
   String? selectedValue;
   late String name = "";
   late String kapiNo = "";
@@ -24,13 +26,13 @@ class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderSt
   late String binaNo = "";
   late String adminId = "";
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
   final User? user = AuthService().currentUser;
-  late CollectionReference siteRef;
-  late CollectionReference adminsRef;
   @override
   void initState() {
     super.initState();
     getInfo();
+    
     lottieController = AnimationController(
       vsync: this,
     );
@@ -60,34 +62,56 @@ class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     CollectionReference siteRef = firebaseFirestore.collection("oguzkent");
     CollectionReference adminsRef = firebaseFirestore.collection("admins");
-    var userKod = siteRef.doc(user!.uid); //{name: taha, surname:bike}
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ListView(
-        children: [
-          SizedBox(height: 40,),
-          Center(
-            child: const SizedBox(
-              child: Text(
-                "Asansör Arıza Bildir",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        leading: IconButton(onPressed: () {
+            Navigator.pop(context);
+          }, icon: Icon(IconlyLight.arrow_left_2, color: Colors.white,)),
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: const Text(
+            "Mesaj Yaz",
+            style: TextStyle(color: Colors.white, fontSize: 17),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4.0),
+            child: Container(
+              height: 1.0,
+              decoration: const BoxDecoration(
+                color: CustomColors.cardColor,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 6,
+                    offset: Offset(0, 1),
+                    spreadRadius: 0.3,
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 30,),
+      ),
+      body: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: ListView(
+        children: [
+          SizedBox(height: 30),
           Row(
             children: [
               Flexible(
                 child: DropdownButtonFormField<String>(
                     
                   icon: const Icon(IconlyLight.arrow_down_2, color: Colors.amber,),
-                  hint: const Text("Gönderen",style: TextStyle(color: Colors.grey),),
+                  hint: const Text("Alıcı",style: TextStyle(color: Colors.grey),),
                   dropdownColor: const Color.fromARGB(255, 54, 53, 53),
                   value: selectedValue,
                   items: [
                      DropdownMenuItem(
                       value: name+" "+surname,
                       child: name !="" && surname !="" ? Text(name+" "+surname) : const Text(""),
+                    ),
+                    DropdownMenuItem(
+                      child: name !="" && surname !="" ? Text("Bütün Site") : const Text(""),
                     ),
                   ],
                   onChanged: (value) {
@@ -116,25 +140,34 @@ class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderSt
               ),
             ],
           ),
-          SizedBox(height: 30,),
-          TextField(
-            textCapitalization: TextCapitalization.characters, // sadece büyük karakter
-            controller: _label,
-            style: TextStyle(color: Colors.white, fontSize: 17),
-            decoration: InputDecoration(
-              hintText: "Bina Adı",
-              hintStyle: TextStyle(fontSize: 17, color: Colors.grey),
-              focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-              prefixIcon: Icon(IconlyLight.home, color: Colors.amber,),
-            ),
-
-          ),
           const SizedBox(height: 40,),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white)
+            ),
+            height: 300,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: TextField(
+              onChanged: (text) {
+                setState(() {
+                        isTextFieldEmpty = text.isEmpty;
+                      });
+              },
+              cursorColor: Colors.amber,
+              style: const TextStyle(color: Colors.white, fontSize: 17),
+              controller: _label,
+              maxLines: null, // Bu özelliği null olarak ayarlamak, kullanıcıya istediği kadar satır girmesine izin verir.
+              decoration: const InputDecoration(
+                hintStyle: TextStyle(fontSize: 17,color: Colors.grey),
+                hintText: 'Mesajınızı buraya girin',
+                border: InputBorder.none
+              )
+              ),
+              
+            ),
+          ),
+          const SizedBox(height: 20,),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -142,20 +175,17 @@ class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderSt
                 
                 onPressed: () async{
                  Map<String,dynamic> ekle = {
-                    "arizaKod":_label.text, 
+                    "label":_label.text,
                     "sender":selectedValue,
-                    "adress": binaNo+"-"+kapiNo
                     };
                     if (selectedValue != null && _label.text != "") {
                       await adminsRef.doc(adminId).update({
-                      "elevatorBox": FieldValue.arrayUnion([
+                      "siteGelen": FieldValue.arrayUnion([
                        ekle
-                      ]),
-                      
+                      ])
                       }); 
-                      
-                      showCustom(context);
                       _label.clear();
+                      showCustomMessage(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -164,25 +194,24 @@ class _ElevatorPageState extends State<ElevatorPage> with SingleTickerProviderSt
                        ),
                      );
                     }
-                    }, 
-                child: const Text("Bildir")),
-              
+                   
+              }, child: const Text("Gönder"))
             ],
           ),
         ],
       ),
+      )
     );
   }
-  
-  showCustom(BuildContext context){
-    FToast tost = FToast();
-    tost.init(context);
+    showCustomMessage(BuildContext context){
+    FToast tostt = FToast();
+    tostt.init(context);
     Widget toast = Container(
       width: 70,
       height: 70,
       child: Lottie.network("https://lottie.host/d68b5ed5-15c1-4236-a24b-88210856628a/MWkALsxXxT.json"),
     );
-    tost.showToast(
+    tostt.showToast(
       positionedToastBuilder: (context, child) => Positioned(child:child,top: MediaQuery.of(context).size.height -200,left: 0,right: 0, ),
       child: toast, toastDuration: Duration(milliseconds: 1600));
     
