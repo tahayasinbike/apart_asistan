@@ -50,7 +50,7 @@ class _AlertPageState extends State<AlertPage> {
         appBar: AppBar(
           leading: IconButton(onPressed: () {
             Navigator.pop(context);
-          }, icon: Icon(IconlyLight.arrow_left_2, color: Colors.white,)),
+          }, icon: const Icon(IconlyLight.arrow_left_2, color: Colors.white,)),
           backgroundColor: Colors.black,
           centerTitle: true,
           title: const Text(
@@ -92,23 +92,104 @@ class _AlertPageState extends State<AlertPage> {
           const SizedBox(height: 20,),
           Container(
             height: 200,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(10))
             ),
           ),//yönetimden gelen mesajlar
-           SizedBox(height: 20,),
+           const SizedBox(height: 20,),
           const SizedBox(
             child: Text("Apartman İçi Mesajlar", style: TextStyle(color: CustomColors.cardColor, fontSize: 20),),
           ),
           const SizedBox(height: 20,),
           Container(
             height: 200,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(10))
             ),
-            
+            child: StreamBuilder(
+              stream: adminIdRef.snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DocumentSnapshot> asyncSnapshot) {
+                    if (!asyncSnapshot.hasData || !asyncSnapshot.data!.exists) {
+                      return const Center(child: Text("Document not found"));
+                    }
+
+                    Map<String, dynamic>? data =
+                        asyncSnapshot.data!.data() as Map<String, dynamic>?;
+
+                    if (data != null && data.containsKey('apartmanGelen') && data['apartmanGelen'] is List) {
+                      List<dynamic> gelenBoxList = data['apartmanGelen'];
+
+                      return Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: gelenBoxList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (gelenBoxList[index] is Map<String, dynamic>) {
+                              Map<String, dynamic> gelenBoxItem =
+                                  gelenBoxList[index] as Map<String, dynamic>;
+                        
+                              return InkWell(
+                                onTap: () {
+                                  showDialog(
+                                useSafeArea: true,
+                                context: context, 
+                                builder: (context) {
+                                  return Dialog(
+                                    child: SizedBox(
+                                      height: 400,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: ListView(
+                                          children: [
+                                             Center(child: Text("${gelenBoxItem["sender"]}",style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                                             Center(child: Text("${gelenBoxItem["label"]}",style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),)),
+                                             const SizedBox(height: 15),
+                                             Text("${gelenBoxItem["label"]}",style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                                             const SizedBox(height: 20),
+                                             
+                                             
+                                          ],
+                                        ),
+                                        ),
+                        
+                                    ),
+                                  );
+                                },);
+                                },
+                                child: Card(
+                                  child: ListTile(
+                                    title: Text("${gelenBoxItem["sender"]}"),
+                                    subtitle: Text("${gelenBoxItem["label"]}",overflow: TextOverflow.ellipsis,),
+                                    trailing: IconButton(
+                                      onPressed: () async {
+                                        await adminIdRef
+                                            .update({
+                                              'apartmanGelen':
+                                                  FieldValue.arrayRemove([gelenBoxItem])
+                                            })
+                                            .then((value) => print("Item Deleted"))
+                                            .catchError(
+                                                (error) => print("Failed to delete item: $error"));
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                      );
+                    } else {
+                      // Handle if 'apartmanGelen' does not exist or is not a List
+                      return const Center(child: Text("'apartmanGelen' not found or is not a List"));
+                    }
+                  },),
           ),//binaya gelen yönetim mesajları
           const SizedBox(height: 20,),
           const SizedBox(
@@ -117,7 +198,7 @@ class _AlertPageState extends State<AlertPage> {
           const SizedBox(height: 20),
           Container(
             height: 200,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(10))
             ),

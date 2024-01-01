@@ -7,14 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 
-class SendMessage extends StatefulWidget {
-  const SendMessage({super.key});
+class SendMessageUser extends StatefulWidget {
+  const SendMessageUser({super.key});
 
   @override
-  State<SendMessage> createState() => _SendMessageState();
+  State<SendMessageUser> createState() => _SendMessageState();
 }
 
-class _SendMessageState extends State<SendMessage> with SingleTickerProviderStateMixin{
+class _SendMessageState extends State<SendMessageUser> with SingleTickerProviderStateMixin{
   late AnimationController lottieController;
   final TextEditingController _alici = TextEditingController();
   final TextEditingController _label = TextEditingController();
@@ -67,7 +67,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
       appBar: AppBar(
         leading: IconButton(onPressed: () {
             Navigator.pop(context);
-          }, icon: Icon(IconlyLight.arrow_left_2, color: Colors.white,)),
+          }, icon: const Icon(IconlyLight.arrow_left_2, color: Colors.white,)),
           backgroundColor: Colors.black,
           centerTitle: true,
           title: const Text(
@@ -92,10 +92,10 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
           ),
       ),
       body: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView(
         children: [
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Row(
             children: [
               Flexible(
@@ -107,12 +107,10 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
                   value: selectedValue,
                   items: [
                      DropdownMenuItem(
-                      value: name+" "+surname,
-                      child: name !="" && surname !="" ? Text(name+" "+surname) : const Text(""),
-                    ),
-                    DropdownMenuItem(
+                      value: "siteGelen",
                       child: name !="" && surname !="" ? Text("Bütün Site") : const Text(""),
                     ),
+                    
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -180,7 +178,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
                     };
                     if (selectedValue != null && _label.text != "") {
                       await adminsRef.doc(adminId).update({
-                      "siteGelen": FieldValue.arrayUnion([
+                      "$selectedValue": FieldValue.arrayUnion([
                        ekle
                       ])
                       }); 
@@ -212,8 +210,8 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
       child: Lottie.network("https://lottie.host/d68b5ed5-15c1-4236-a24b-88210856628a/MWkALsxXxT.json"),
     );
     tostt.showToast(
-      positionedToastBuilder: (context, child) => Positioned(child:child,top: MediaQuery.of(context).size.height -200,left: 0,right: 0, ),
-      child: toast, toastDuration: Duration(milliseconds: 1600));
+      positionedToastBuilder: (context, child) => Positioned(top: MediaQuery.of(context).size.height -200,left: 0,right: 0,child:child, ),
+      child: toast, toastDuration: const Duration(milliseconds: 1600));
     
   }
 }
