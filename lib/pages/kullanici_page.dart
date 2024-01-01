@@ -82,9 +82,9 @@ class _KullaniciPageState extends State<KullaniciPage> {
                 ListTileMethod(context: context, icon: IconlyLight.add_user, titlee: "Kullanıcı ekle",),
                 ListTileMethod(context: context, titlee: "Oturanlar", icon: IconlyLight.user, sayfa: const AllUsers()),
                 ListTileMethod(context: context, titlee: "Gelen Kutusu", icon: IconlyLight.message,sayfa: const GelenKutusu()),
-                ListTileMethod(context: context, titlee: "Siteye Gönder", icon: IconlyLight.edit, sayfa: const SendMessage()),
-                ListTileMethod(context: context, titlee: "Binaya Gönder", icon: IconlyLight.edit, sayfa: const SendMessageApart()),
-                ListTileMethod(context: context, titlee: "Kişiye Gönder", icon: IconlyLight.edit, sayfa: const SendMessageUser()),
+                ListTileMethod(context: context, titlee: "Siteye Gönder", icon: IconlyLight.user_1, sayfa: const SendMessage()),
+                ListTileMethod(context: context, titlee: "Binaya Gönder", icon: IconlyLight.home, sayfa: const SendMessageApart()),
+                ListTileMethod(context: context, titlee: "Kişiye Gönder", icon: IconlyLight.profile, sayfa: const SendMessageUser()),
                 ListTileMethod(context: context, titlee: "Asansör Arıza", icon: IconlyLight.danger, sayfa: const ElevatorGelenKutusu())
               ],
             ),

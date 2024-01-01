@@ -7,14 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:apart_asistan/service/auth_service.dart';
 import 'package:apart_asistan/utils/custom_colors.dart';
 
-class SendMessage extends StatefulWidget {
-  const SendMessage({Key? key}) : super(key: key);
+class SendMessageApart extends StatefulWidget {
+  const SendMessageApart({Key? key}) : super(key: key);
 
   @override
-  State<SendMessage> createState() => _SendMessageState();
+  State<SendMessageApart> createState() => _SendMessageState();
 }
 
-class _SendMessageState extends State<SendMessage> with SingleTickerProviderStateMixin {
+class _SendMessageState extends State<SendMessageApart> with SingleTickerProviderStateMixin {
   late AnimationController lottieController;
   final TextEditingController _label = TextEditingController();
   bool isTextFieldEmpty = true;
@@ -32,6 +32,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+    getInfo();
     lottieController = AnimationController(
       vsync: this,
     );
@@ -68,47 +69,6 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getInfo(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Loading state
-          return Scaffold(
-            backgroundColor: Colors.black,
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(IconlyLight.arrow_left_2, color: Colors.white),
-              ),
-              backgroundColor: Colors.black,
-              centerTitle: true,
-              title: const Text(
-                "Gelen Kutusu",
-                style: TextStyle(color: Colors.white, fontSize: 17),
-              ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(4.0),
-                child: Container(
-                  height: 1.0,
-                  decoration: const BoxDecoration(
-                    color: CustomColors.cardColor,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 6,
-                        offset: Offset(0, 1),
-                        spreadRadius: 0.3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        } else {
-          // Data loaded, build your UI
           return Scaffold(
             backgroundColor: Colors.black,
             appBar: AppBar(
@@ -121,7 +81,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
               backgroundColor: Colors.black,
               centerTitle: true,
               title: const Text(
-                "Mesaj Yaz",
+                "Binaya Mesaj Yaz",
                 style: TextStyle(color: Colors.white, fontSize: 17),
               ),
               bottom: PreferredSize(
@@ -152,7 +112,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
                         child: DropdownButtonFormField<String>(
                           icon: const Icon(IconlyLight.arrow_down_2, color: Colors.amber),
                           hint: const Text(
-                            "Alıcı",
+                            "Alıcı Bina",
                             style: TextStyle(color: Colors.grey),
                           ),
                           dropdownColor: const Color.fromARGB(255, 54, 53, 53),
@@ -218,7 +178,7 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
                         onPressed: () async {
                           Map<String, dynamic> ekle = {
                             "label": _label.text,
-                            "sender": selectedValue,
+                            "sender": selectedValue,//1A vs..
                           };
                           if (selectedValue != null && _label.text != "") {
                             CollectionReference adminsRef = firebaseFirestore.collection("admins");
@@ -245,9 +205,8 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
             ),
           );
         }
-      },
-    );
-  }
+      }
+
 
   showCustomMessage(BuildContext context) {
     FToast tostt = FToast();
@@ -264,4 +223,3 @@ class _SendMessageState extends State<SendMessage> with SingleTickerProviderStat
       toastDuration: const Duration(milliseconds: 1600),
     );
   }
-}
